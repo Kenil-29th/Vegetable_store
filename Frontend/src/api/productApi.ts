@@ -52,6 +52,30 @@ export const productApi = {
     }
   },
 
+  // Get products for the logged-in supplier
+  getMyProducts: async (): Promise<Product[]> => {
+    try {
+      const token = localStorage.getItem("token");
+      const headers: { [key: string]: string } = {};
+      if (token) headers.Authorization = `Bearer ${token}`;
+
+      const response = await fetch(`${API_URL}/supplier/my-products`, {
+        headers,
+        credentials: 'include',
+      });
+      
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || 'Failed to fetch your products');
+      }
+
+      return response.json();
+    } catch (error) {
+      console.error('Error fetching your products:', error);
+      throw error instanceof Error ? error : new Error('Failed to fetch your products');
+    }
+  },
+
   getById: async (id: string): Promise<Product> => {
     try {
       const response = await fetch(`${API_URL}/${id}`);

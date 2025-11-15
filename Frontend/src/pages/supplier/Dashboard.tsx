@@ -64,7 +64,7 @@ const SupplierDashboard = () => {
   const loadProducts = useCallback(async () => {
     setIsLoading(true);
     try {
-      const data = await productApi.list();
+      const data = await productApi.getMyProducts();
       setProducts(data);
     } catch (error) {
       toast({

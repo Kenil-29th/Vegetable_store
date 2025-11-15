@@ -27,6 +27,16 @@ export const listProducts = async (req, res) => {
   }
 };
 
+// Get products for the logged-in supplier
+export const getMyProducts = async (req, res) => {
+  try {
+    const products = await Product.find({ supplier: req.user._id });
+    res.json(products);
+  } catch (err) {
+    res.status(500).json({ message: "Fetch failed", error: err.message });
+  }
+};
+
 export const getProduct = async (req, res) => {
   try {
     const product = await Product.findById(req.params.id);
@@ -41,6 +51,17 @@ export const updateProduct = async (req, res) => {
   try {
     const product = await Product.findById(req.params.id);
     if (!product) return res.status(404).json({ message: "Not found" });
+
+    // Allow admins to update any product
+    if (req.user.role !== 'admin') {
+      // Suppliers can only update their own products
+      if (!product.supplier) {
+        return res.status(403).json({ message: "Access denied: Product has no supplier assigned" });
+      }
+      if (product.supplier.toString() !== req.user._id.toString()) {
+        return res.status(403).json({ message: "Access denied: You can only update your own products" });
+      }
+    }
 
     const updates = req.body;
     if (req.file) {
