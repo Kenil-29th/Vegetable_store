@@ -14,9 +14,15 @@ export const productApi = {
         }
       });
 
+      const token = localStorage.getItem("token");
+      const headers: { [key: string]: string } = {};
+      if (token) headers.Authorization = `Bearer ${token}`;
+
       const response = await fetch(API_URL, {
         method: 'POST',
+        headers,
         body: formData,
+        credentials: 'include',
       });
 
       if (!response.ok) {
@@ -72,9 +78,15 @@ export const productApi = {
         }
       });
 
+      const token = localStorage.getItem("token");
+      const headers: { [key: string]: string } = {};
+      if (token) headers.Authorization = `Bearer ${token}`;
+
       const response = await fetch(`${API_URL}/${id}`, {
         method: 'PUT',
+        headers,
         body: formData,
+        credentials: 'include',
       });
 
       if (!response.ok) {
@@ -91,8 +103,14 @@ export const productApi = {
 
   delete: async (id: string): Promise<void> => {
     try {
+      const token = localStorage.getItem("token");
+      const headers: { [key: string]: string } = {};
+      if (token) headers.Authorization = `Bearer ${token}`;
+
       const response = await fetch(`${API_URL}/${id}`, {
         method: 'DELETE',
+        headers,
+        credentials: 'include',
       });
 
       if (!response.ok) {

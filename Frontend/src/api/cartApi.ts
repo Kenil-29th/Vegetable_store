@@ -2,6 +2,7 @@ import axios from "axios";
 
 const API = axios.create({
   baseURL: "/api/cart",
+  withCredentials: true,
 });
 
 // Attach token from localStorage for protected routes

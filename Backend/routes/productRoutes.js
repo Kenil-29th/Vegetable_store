@@ -7,7 +7,7 @@ import {
   deleteProduct
 } from "../controllers/productController.js";
 import { uploadSingle } from "../middlewares/uploadMiddleware.js";
-import { protect } from "../middlewares/authMiddleware.js";
+import { protect, authorizeRoles } from "../middlewares/authMiddleware.js";
 
 const router = express.Router();
 
@@ -19,6 +19,6 @@ router.get("/:id", getProduct);
 router.use(protect);
 router.post("/", uploadSingle, createProduct);
 router.put("/:id", uploadSingle, updateProduct);
-router.delete("/:id", deleteProduct);
+router.delete("/:id", authorizeRoles('supplier', 'admin'), deleteProduct);
 
 export default router;

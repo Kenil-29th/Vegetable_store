@@ -61,6 +61,23 @@ export const deleteProduct = async (req, res) => {
   try {
     const product = await Product.findById(req.params.id);
     if (!product) return res.status(404).json({ message: "Not found" });
+
+    // Allow admins to delete any product
+    if (req.user.role === 'admin') {
+      if (product.image) await deleteFile(product.image);
+      await product.deleteOne();
+      return res.json({ message: "Deleted" });
+    }
+
+    // Suppliers can only delete their own products
+    if (!product.supplier) {
+      return res.status(403).json({ message: "Access denied: Product has no supplier assigned" });
+    }
+
+    if (product.supplier.toString() !== req.user._id.toString()) {
+      return res.status(403).json({ message: "Access denied: You can only delete your own products" });
+    }
+
     if (product.image) await deleteFile(product.image);
     await product.deleteOne();
     res.json({ message: "Deleted" });
