@@ -14,6 +14,7 @@ import SupplierDashboard from "./pages/supplier/Dashboard";
 import SupplierProducts from "./pages/supplier/Products";
 import AdminDashboard from "./pages/admin/Dashboard";
 import NotFound from "./pages/NotFound";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 const queryClient = new QueryClient();
 
@@ -27,13 +28,49 @@ const App = () => (
           <Route path="/" element={<Home />} />
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/customer/products" element={<Products />} />
-          <Route path="/customer/products/:id" element={<ProductDetailPage />} />
-          <Route path="/customer/cart" element={<CartPage />} />
-          <Route path="/supplier/dashboard" element={<SupplierDashboard />} />
+          <Route 
+            path="/customer/products" 
+            element={
+              <ProtectedRoute allowedRoles={["user"]}>
+                <Products />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/customer/products/:id" 
+            element={
+              <ProtectedRoute allowedRoles={["user"]}>
+                <ProductDetailPage />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/customer/cart" 
+            element={
+              <ProtectedRoute allowedRoles={["user"]}>
+                <CartPage />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/supplier/dashboard" 
+            element={
+              <ProtectedRoute allowedRoles={["supplier"]}>
+                <SupplierDashboard />
+              </ProtectedRoute>
+            } 
+          />
           {/* <Route path="/supplier/products" element={<SupplierProducts />} /> */}
-          <Route path="/admin/dashboard" element={<AdminDashboard />} />
+          <Route 
+            path="/admin/dashboard" 
+            element={
+              <ProtectedRoute allowedRoles={["admin"]}>
+                <AdminDashboard />
+              </ProtectedRoute>
+            } 
+          />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+          <Route path="/404" element={<NotFound />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
