@@ -35,6 +35,8 @@ export const CartView: React.FC<Props> = ({ items, total = 0, onCartUpdated }) =
       setLoadingItem(itemId);
       const updated = await cartApi.updateCartItem(itemId, quantity);
       onCartUpdated?.(updated);
+      localStorage.setItem("cart", JSON.stringify(updated.items || []));
+      window.dispatchEvent(new Event("storage"));
       toast({ title: "Updated", description: "Cart updated" });
     } catch (err: unknown) {
       console.error("Failed to update cart item:", err);
@@ -51,6 +53,8 @@ export const CartView: React.FC<Props> = ({ items, total = 0, onCartUpdated }) =
       setLoadingItem(itemId);
       const updated = await cartApi.removeCartItem(itemId);
       onCartUpdated?.(updated);
+      localStorage.setItem("cart", JSON.stringify(updated.items || []));
+      window.dispatchEvent(new Event("storage"));
       toast({ title: "Removed", description: "Item removed from cart" });
     } catch (err: unknown) {
       console.error("Failed to remove cart item:", err);
@@ -66,6 +70,8 @@ export const CartView: React.FC<Props> = ({ items, total = 0, onCartUpdated }) =
     try {
       const updated = await cartApi.clearCart();
       onCartUpdated?.(updated);
+      localStorage.setItem("cart", JSON.stringify([]));
+      window.dispatchEvent(new Event("storage"));
       toast({ title: "Cleared", description: "Cart cleared" });
     } catch (err: unknown) {
       console.error("Failed to clear cart:", err);
@@ -85,6 +91,8 @@ export const CartView: React.FC<Props> = ({ items, total = 0, onCartUpdated }) =
       await cartApi.checkoutCart();
       toast({ title: "Order Placed", description: "Your order has been placed successfully!" });
       onCartUpdated?.({ items: [], total: 0 }); // Clear cart locally
+      localStorage.setItem("cart", JSON.stringify([]));
+      window.dispatchEvent(new Event("storage"));
       setShowBill(false);
       navigate("/");
     } catch (err: unknown) {
