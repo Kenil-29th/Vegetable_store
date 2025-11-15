@@ -6,9 +6,10 @@ import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/componen
 interface Props {
   product: Product;
   onAddToCart?: (id: string) => void;
+  onBuyNow?: (id: string) => void;
 }
 
-export const ProductDetail: React.FC<Props> = ({ product, onAddToCart }) => {
+export const ProductDetail: React.FC<Props> = ({ product, onAddToCart, onBuyNow }) => {
   const imageSrc = product.image ? `/${product.image.replace(/^\//, "")}` : undefined;
 
   return (
@@ -47,7 +48,7 @@ export const ProductDetail: React.FC<Props> = ({ product, onAddToCart }) => {
           <CardFooter className="p-0">
             <div className="flex gap-3">
               <Button onClick={() => onAddToCart?.(product._id)}>Add to Cart</Button>
-              <Button variant="secondary">Buy Now</Button>
+              <Button variant="secondary" onClick={() => onBuyNow?.(product._id)}>Buy Now</Button>
             </div>
           </CardFooter>
         </div>

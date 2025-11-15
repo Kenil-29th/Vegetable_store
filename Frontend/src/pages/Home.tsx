@@ -7,6 +7,7 @@ import { productApi } from "@/api/productApi";
 import { Product } from "@/types/product";
 
 const ProductPreview: React.FC = () => {
+  const navigate = useNavigate();
   const [items, setItems] = useState<Product[]>([]);
 
   useEffect(() => {
@@ -39,7 +40,11 @@ const ProductPreview: React.FC = () => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
       {items.map((p) => (
-        <div key={p._id} className="group bg-card rounded-2xl p-6 hover:shadow-card-hover transition-all duration-300 hover:-translate-y-2 cursor-pointer">
+        <div 
+          key={p._id} 
+          className="group bg-card rounded-2xl p-6 hover:shadow-card-hover transition-all duration-300 hover:-translate-y-2 cursor-pointer"
+          onClick={() => navigate(`/customer/products/${p._id}`)}
+        >
           <div className="h-40 mb-3">
             {p.image ? (
               <img src={`/${p.image.replace(/^\//, "")}`} alt={p.name} className="w-full h-full object-cover rounded-md" />

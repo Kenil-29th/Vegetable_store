@@ -38,16 +38,38 @@ const ProductDetailPage: React.FC = () => {
       navigate("/login");
       return;
     }
-    const updatedCart = await cartApi.getCart();
-localStorage.setItem("cart", JSON.stringify(updatedCart.items || []));
-window.dispatchEvent(new Event("storage"));
-
 
     try {
       await cartApi.addToCart(productId, 1);
       toast({ title: "Added to cart", description: "Product added to your cart" });
+      const updatedCart = await cartApi.getCart();
+      localStorage.setItem("cart", JSON.stringify(updatedCart.items || []));
+      window.dispatchEvent(new Event("storage"));
     } catch (err: unknown) {
       console.error("Failed add to cart:", err);
+      type Err = { response?: { data?: { message?: string } }; message?: string };
+      const e = err as Err;
+      toast({ variant: "destructive", title: "Error", description: e?.response?.data?.message || e?.message || "Failed to add to cart" });
+    }
+  };
+
+  const handleBuyNow = async (productId: string) => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      toast({ variant: "destructive", title: "Not authenticated", description: "Please login to continue" });
+      navigate("/login");
+      return;
+    }
+
+    try {
+      await cartApi.addToCart(productId, 1);
+      toast({ title: "Added to cart", description: "Redirecting to cart..." });
+      const updatedCart = await cartApi.getCart();
+      localStorage.setItem("cart", JSON.stringify(updatedCart.items || []));
+      window.dispatchEvent(new Event("storage"));
+      navigate("/customer/cart");
+    } catch (err: unknown) {
+      console.error("Failed to add to cart:", err);
       type Err = { response?: { data?: { message?: string } }; message?: string };
       const e = err as Err;
       toast({ variant: "destructive", title: "Error", description: e?.response?.data?.message || e?.message || "Failed to add to cart" });
@@ -65,7 +87,7 @@ window.dispatchEvent(new Event("storage"));
   return (
     <div className="container mx-auto py-10">
       <Button variant="ghost" onClick={() => navigate(-1)} className="mb-6">Back</Button>
-      <ProductDetail product={product} onAddToCart={handleAddToCart} />
+      <ProductDetail product={product} onAddToCart={handleAddToCart} onBuyNow={handleBuyNow} />
     </div>
   );
 };
